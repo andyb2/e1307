@@ -24,7 +24,7 @@ const ActiveChat = (props) => {
   const classes = useStyles();
   const { user } = props;
   const conversation = props.conversation || {};
-
+  console.log(`convo`, props)
   return (
     <Box className={classes.root}>
       {conversation.otherUser && (
