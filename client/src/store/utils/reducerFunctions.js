@@ -1,7 +1,8 @@
 export const addMessageToStore = (state, payload) => {
-  const { message, sender } = payload;
+  const { message, sender, myUser, recipientId } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
-  if (sender !== null) {
+  // if the user id matches the recipient id then only the recipients state should update
+  if (sender !== null && myUser === recipientId) {
     const newConvo = {
       id: message.conversationId,
       otherUser: sender,
@@ -13,9 +14,10 @@ export const addMessageToStore = (state, payload) => {
 
   return state.map((convo) => {
     if (convo.id === message.conversationId) {
-      convo.messages.push(message);
-      convo.latestMessageText = message.text;
-      return convo;
+      const convoCopy = { ...convo }
+      convoCopy.messages.push(message);
+      convoCopy.latestMessageText = message.text;
+      return convoCopy;
     } else {
       return convo;
     }
@@ -69,12 +71,21 @@ export const addSearchedUsersToStore = (state, users) => {
 export const addNewConvoToStore = (state, recipientId, message) => {
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
-      convo.id = message.conversationId;
-      convo.messages.push(message);
-      convo.latestMessageText = message.text;
-      return convo;
+      const convoCopy = { ...convo }
+      convoCopy.id = message.conversationId;
+      convoCopy.messages.push(message);
+      convoCopy.latestMessageText = message.text;
+      return convoCopy;
     } else {
       return convo;
     }
   });
 };
+
+export const displayConversations = (payload) => {
+  return payload.map(user => {
+    const userCopy = { ...user }
+    userCopy.messages = userCopy.messages.sort((firstMsg, secondMsg) => firstMsg.id - secondMsg.id)
+    return userCopy
+  })
+}
