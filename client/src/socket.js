@@ -34,10 +34,8 @@ socket.on("connect", () => {
       messageCopy.readReceipt = true
       store.dispatch(setReadReceipt(convoData));
       store.dispatch(setNewMessage(messageCopy, data.sender));
-      console.log(`triggered #1`)
     }
     if (data.recipientId === clientState.user.id && clientState.activeConversation !== data.msgSender.user) {
-      console.log(`triggered #2`)
       store.dispatch(setNewMessage(data.message, data.sender));
     }
   });
