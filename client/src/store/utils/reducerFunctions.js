@@ -1,8 +1,7 @@
 export const addMessageToStore = (state, payload) => {
   const { message, sender, myUser, recipientId } = payload;
   // if sender isn't null, that means the message needs to be put in a brand new convo
-  // if the user id matches the recipient id then only the recipients state should update
-  if (sender !== null && myUser === recipientId) {
+  if (sender !== null) {
     const newConvo = {
       id: message.conversationId,
       otherUser: sender,
@@ -89,3 +88,16 @@ export const displayConversations = (payload) => {
     return userCopy
   })
 }
+
+export const addReadReceiptsToStore = (state, payload) => {
+  const { messages, convoId } = payload;
+  return state.map((convo) => {
+    if (convo.id === convoId) {
+      const convoCopy = { ...convo }
+      convoCopy.messages = messages
+      return convoCopy
+    } else {
+      return convo
+    }
+  })
+} 
