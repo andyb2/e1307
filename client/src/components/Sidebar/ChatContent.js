@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import UnreadMessages from "./UnreadMessages";
 import { Box, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -22,9 +23,18 @@ const useStyles = makeStyles((theme) => ({
 
 const ChatContent = (props) => {
   const classes = useStyles();
-
+  const [messageLength, setMessageLength] = useState(0)
   const { conversation } = props;
   const { latestMessageText, otherUser } = conversation;
+
+  const missedMessagesCalc = useCallback(() => {
+    const numberOfUnreadMessages = conversation.messages.filter(messages => messages.readReceipt === false && messages.senderId === otherUser.id)
+    setMessageLength(numberOfUnreadMessages.length)
+  }, [conversation, otherUser.id])
+
+  useEffect(() => {
+    missedMessagesCalc();
+  }, [missedMessagesCalc])
 
   return (
     <Box className={classes.root}>
@@ -36,8 +46,9 @@ const ChatContent = (props) => {
           {latestMessageText}
         </Typography>
       </Box>
+      {messageLength > 0 && <UnreadMessages conversation={conversation} unread={messageLength} />}
     </Box>
-  );
+  )
 };
 
 export default ChatContent;
