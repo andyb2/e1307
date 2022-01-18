@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { Box, Typography } from "@material-ui/core";
 
@@ -22,14 +22,14 @@ const useStyles = makeStyles((theme) => ({
 
 const UnreadMessages = (props) => {
     const classes = useStyles();
-    const [messageLength, setMessageLength] = useState(0)
-    const { conversation } = props;
+    const { conversation, unread } = props;
     const { otherUser } = conversation;
+    const { missedMessages, setMissedMessages } = unread
 
     const missedMessagesCalc = useCallback(() => {
         const numberOfUnreadMessages = conversation.messages.filter(messages => messages.readReceipt === false && messages.senderId === otherUser.id)
-        setMessageLength(numberOfUnreadMessages.length)
-    }, [conversation, otherUser.id])
+        setMissedMessages(numberOfUnreadMessages.length)
+    }, [conversation, otherUser.id, setMissedMessages])
 
     useEffect(() => {
         missedMessagesCalc();
@@ -37,9 +37,9 @@ const UnreadMessages = (props) => {
 
     return (
         <Box className={classes.root}>
-            {messageLength > 0 &&
+            {missedMessages > 0 &&
                 <Typography className={classes.bubbleNumber}>
-                    {messageLength > 99 ? '99+' : messageLength}
+                    {missedMessages > 99 ? '99+' : missedMessages}
                 </Typography>
             }
         </Box>
