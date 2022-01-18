@@ -70,7 +70,7 @@ export const addSearchedUsersToStore = (state, users) => {
 export const addNewConvoToStore = (state, recipientId, message) => {
   return state.map((convo) => {
     if (convo.otherUser.id === recipientId) {
-      const convoCopy = { ...convo }
+      const convoCopy = { ...convo, messages: [...convo.messages] }
       convoCopy.id = message.conversationId;
       convoCopy.messages.push(message);
       convoCopy.latestMessageText = message.text;
@@ -83,8 +83,15 @@ export const addNewConvoToStore = (state, recipientId, message) => {
 
 export const displayConversations = (payload) => {
   return payload.map(user => {
-    const userCopy = { ...user }
-    userCopy.messages = userCopy.messages.sort((firstMsg, secondMsg) => firstMsg.id - secondMsg.id)
+    const userCopy = { ...user, messages: [...user.messages] }
+    userCopy.messages = userCopy.messages.sort((firstMsg, secondMsg) => {
+      if (firstMsg.createdAt > secondMsg.createdAt) {
+        return 1
+      }
+      if (firstMsg.createdAt < secondMsg.createdAt) {
+        return -1
+      }
+    })
     return userCopy
   })
 }
