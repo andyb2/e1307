@@ -4,6 +4,7 @@ import {
   setNewMessage,
   removeOfflineUser,
   addOnlineUser,
+  updateReadReceipts,
 } from "./store/conversations";
 import { setReadReceipt } from "./store/utils/thunkCreators";
 
@@ -37,6 +38,16 @@ socket.on("connect", () => {
     }
     if (data.recipientId === clientState.user.id && clientState.activeConversation !== data.msgSender.user) {
       store.dispatch(setNewMessage(data.message, data.sender));
+    }
+  });
+
+  socket.on("active-chat", (data) => {
+    const clientState = store.getState();
+    if (data.receiver === clientState.user.username) {
+      return store.dispatch(updateReadReceipts(data.messages, data.convoId));
+    }
+    if (data.senderId === clientState.user.id) {
+      store.dispatch(updateReadReceipts(data.messages, data.convoId));
     }
   });
 });
