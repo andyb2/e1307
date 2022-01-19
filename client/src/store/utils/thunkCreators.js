@@ -104,12 +104,22 @@ export const postMessage = (body) => async (dispatch) => {
   }
 };
 
+const updateOtherUsersReadReceipts = (data, convoId, convo) => {
+  socket.emit("active-chat", {
+    messages: data.messages,
+    convoId: convoId,
+    receiver: convo.otherUser.username,
+    senderId: convo.otherUser.id
+  });
+};
+
 export const setReadReceipt = (convo) => async (dispatch) => {
   try {
     const { data } = await axios.put("/api/receipts", convo);
     if (!convo.active) {
       dispatch(updateReadReceipts(data.messages, convo.id));
     }
+    updateOtherUsersReadReceipts(data, convo.id, convo);
   } catch (error) {
     console.error(error)
   }
