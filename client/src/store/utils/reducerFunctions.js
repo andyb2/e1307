@@ -87,9 +87,10 @@ export const displayConversations = (payload) => {
     userCopy.messages = userCopy.messages.sort((firstMsg, secondMsg) => {
       if (firstMsg.createdAt > secondMsg.createdAt) {
         return 1
-      }
-      if (firstMsg.createdAt < secondMsg.createdAt) {
+      } else if (firstMsg.createdAt < secondMsg.createdAt) {
         return -1
+      } else {
+        return null
       }
     })
     return userCopy
@@ -100,7 +101,7 @@ export const addReadReceiptsToStore = (state, payload) => {
   const { messages, convoId } = payload;
   return state.map((convo) => {
     if (convo.id === convoId) {
-      const convoCopy = { ...convo }
+      const convoCopy = { ...convo, messages: [...convo.messages] }
       convoCopy.messages = messages
       return convoCopy
     } else {
