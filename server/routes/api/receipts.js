@@ -3,6 +3,9 @@ const { Message } = require("../../db/models")
 
 router.put("/", async (req, res, next) => {
     try {
+        if (!req.user) {
+            return res.sendStatus(401);
+        }
         const conversationId = req.body.id;
         const otherUserId = req.body.otherUser.id
 
@@ -22,7 +25,7 @@ router.put("/", async (req, res, next) => {
             }
         });
 
-        res.json({ completed: trueReadReceipt, messages: updatedMessages });
+        res.json({ messages: updatedMessages });
     } catch (error) {
         next(error)
     }
