@@ -5,6 +5,7 @@ import {
   addConversation,
   setNewMessage,
   setSearchedUsers,
+  updateReadReceipts,
 } from "../conversations";
 import { gotUser, setFetchingStatus } from "../user";
 
@@ -83,6 +84,7 @@ const sendMessage = (data, body) => {
     message: data.message,
     recipientId: body.recipientId,
     sender: data.sender,
+    msgSender: body.msgSender,
   });
 };
 
@@ -101,6 +103,27 @@ export const postMessage = (body) => async (dispatch) => {
     console.error(error);
   }
 };
+
+const updateOtherUsersReadReceipts = (data, convoId, convo) => {
+  socket.emit("active-chat", {
+    messages: data.messages,
+    convoId: convoId,
+    receiver: convo.otherUser.username,
+    senderId: convo.otherUser.id
+  });
+};
+
+export const setReadReceipt = (convo) => async (dispatch) => {
+  try {
+    const { data } = await axios.put("/api/receipts", convo);
+    if (!convo.active) {
+      dispatch(updateReadReceipts(data.messages, convo.id));
+    }
+    updateOtherUsersReadReceipts(data, convo.id, convo);
+  } catch (error) {
+    console.error(error)
+  }
+}
 
 export const searchUsers = (searchTerm) => async (dispatch) => {
   try {

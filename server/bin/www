@@ -45,6 +45,16 @@ io.on("connection", (socket) => {
       message: data.message,
       sender: data.sender,
       recipientId: data.recipientId,
+      msgSender: data.msgSender,
+    });
+  });
+
+  socket.on("active-chat", (data) => {
+    socket.broadcast.emit("active-chat", {
+      messages: data.messages,
+      convoId: data.convoId,
+      receiver: data.receiver,
+      senderId: data.senderId,
     });
   });
 
